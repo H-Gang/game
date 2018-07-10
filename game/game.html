@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		body {
+			background-image: url('./images/zt.jpg');
+		}
+
+	</style>
+</head>
+<body>
+	<img src="images/ren_d_1.gif" id='img' style='position: absolute;margin: 0 auto;top: 100px;'>
+	<div class="div" ><p style="font-size:20px; font-weight: bold; ">
+		//游戏名: 大胃王嘟嘟<br/>
+		//作者: 黄港<br/>
+		//游戏规则: Q加速 E减速 space暂停 w/s/a/d 上/下/左/右 </p></div>
+</body>
+</html>
+<script type="text/javascript">
+	var oImage = document.getElementById('img');
+	var image1 = 'ren_d_1.gif';
+	var image2 = 'ren_d_2.gif';
+	var width = document.documentElement.clientWidth;
+	var height = document.documentElement.clientHeight;
+	var xspeed = 0;
+	var yspeed = 0;
+	var speed = 1.2;
+	var timer = null;
+	var n = 0;
+	timer = setInterval(go,100);
+	var aFruit = [];
+	fruit();
+	function go()
+	{
+		var imageSrc = getImageSrc(oImage.src);
+		if (imageSrc == image1) {
+			oImage.src = 'images/'+image2;
+		} else {
+			oImage.src = 'images/'+image1;
+		}
+		var top = oImage.offsetTop + yspeed;
+		var left = oImage.offsetLeft + xspeed;
+		if (top <=0) {
+			top = 0;
+		}
+		if (left <=0) {
+			left = 0;
+		}
+		if (top >= height-oImage.offsetHeight) {
+			top = height-oImage.offsetHeight;
+		}
+		if (left >= width-oImage.offsetWidth) {
+			left = width-oImage.offsetWidth;
+		}
+		oImage.style.top = top+'px';
+		oImage.style.left = left+'px';
+		eatFruit();
+
+	}
+	function eatFruit()
+	{
+		var imageWidth = oImage.offsetWidth;
+		var imageHeight = oImage.offsetHeight;
+		var top = oImage.offsetTop;
+		var left = oImage.offsetLeft;
+		for (var i=0; i<aFruit.length; i++) {
+			var x = aFruit[i].offsetLeft;
+			var y = aFruit[i].offsetTop;
+			var z = aFruit[i].offsetHeight;
+			var v = aFruit[i].offsetWidth;
+			if (((top >= y-imageHeight) && (top <= y + z)) && ((left >= x-imageWidth) && (left <= x + v))) {
+				document.body.removeChild(aFruit[i]);
+				oImage.style.width = imageWidth + 10 +'px';
+				oImage.style.height = imageHeight + 10 +'px';
+				aFruit.splice(i, 1);
+				if (aFruit.length <= 0) {
+					fruit();
+				}
+			}
+		}
+	}
+	function fruit()
+	{
+		var shuiguo = ['images/pt.gif', 'images/xg.gif', 'images/hg.gif'];
+		for (var i=0; i<10; i++) {
+			var x = Math.random()*width-30;
+			var y = Math.random()*height-30;
+			var imageName = shuiguo[parseInt(Math.random()*(shuiguo.length))];
+			var oImg = document.createElement('img');
+			oImg.src = imageName;
+			oImg.style.position = 'absolute';
+			oImg.style.top = y + 'px';
+			oImg.style.left = x + 'px';
+			aFruit.push(oImg);
+			document.body.appendChild(oImg);
+		}
+
+	}
+	function getImageSrc(imagePath)
+	{
+		var pos = imagePath.lastIndexOf('/');
+		return imagePath.substr(pos+1);
+	}
+	window.onkeydown = function (ev) {
+		var oEvent = ev ||event;
+		// alert(oEvent.keyCode)
+		switch(oEvent.keyCode) {
+			case 87:  //w
+				image1 = 'ren_u_1.gif';
+				image2 = 'ren_u_2.gif';
+				xspeed = 0 ;
+				yspeed = -5; 
+				xspeed *= Math.pow(speed, n);
+				yspeed *= Math.pow(speed, n);
+				break;
+			case 65: //a
+				image1 = 'ren_l_1.gif';
+				image2 = 'ren_l_2.gif';
+				xspeed = -5;
+				yspeed = 0 ;
+				xspeed *= Math.pow(speed, n);
+				yspeed *= Math.pow(speed, n);
+				break;
+			case 83: //s
+				image1 = 'ren_d_1.gif';
+				image2 = 'ren_d_2.gif';
+				xspeed = 0;
+				yspeed = 5;
+				xspeed *= Math.pow(speed, n);
+				yspeed *= Math.pow(speed, n);
+				break;
+			case 68: //d
+				image1 = 'ren_r_1.gif';
+				image2 = 'ren_r_2.gif';
+				xspeed = 5;
+				yspeed = 0;
+				xspeed *= Math.pow(speed, n);
+				yspeed *= Math.pow(speed, n);
+				break;
+			case 81:  // 
+				n++;
+				xspeed *= speed;
+				yspeed *= speed;
+				break;
+			case 69:  // 
+				n--;
+				xspeed /= speed;
+				yspeed /= speed;
+				break;
+			case 32:  //
+				if (timer != null)
+				{
+				clearInterval(timer);
+				timer = null;
+				} else {
+					timer = setInterval(go,100); 
+				}
+				break;
+		}
+	}
+</script>
